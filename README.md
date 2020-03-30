@@ -4,13 +4,13 @@ Getting Started
 ---------------
 
 ```sh
-cd supersolid
+cd palindrome
 
 # Build the docker
-docker build -t supersolid.
+docker build -t palindrome.
 
 # run the docker
-docker run -p 3000:3000 supersolid
+docker run -p 3000:3000 palindrome
  
 
 ```
