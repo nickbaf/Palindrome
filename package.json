@@ -1,6 +1,6 @@
 {
-  "name": "supersolid",
-  "version": "0.3.0",
+  "name": "palindrome",
+  "version": "1.0.0",
   "description": "Palindrome game backend",
   "main": "dist",
   "scripts": {
