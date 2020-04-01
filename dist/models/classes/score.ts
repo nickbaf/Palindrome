@@ -1,3 +1,8 @@
+/**
+ * Class that represents a Score
+ * name: the player's name
+ * points: the number of points that the player's submition has
+ */
 export class Score {
     name: string;
     points: number;
@@ -5,6 +10,10 @@ export class Score {
         this.name = playerName;
         this.points=this.palindrome(word);
     }
+    /**
+     * Function that given a new word updates the highscore.
+     * @param word the word that the player has submited
+     */
     updateScore(word:string){
         var score=this.palindrome(word)
         if(score>this.points){
@@ -13,13 +22,16 @@ export class Score {
     }
 
 
-
+    /**
+     * Function that calculates the palindrome
+     * @param word the word that the player has submited
+     */
      palindrome(word:string):number {
         if (word === "") {
             return word.length;
         }
         
-        // 1. Remove non-alphanumeric chars from the string
+        // Remove illegal chars
         const alphanum = word.toLowerCase().replace(/[\W]/g, "");
         
         let front = 0;

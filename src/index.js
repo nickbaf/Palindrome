@@ -75,9 +75,6 @@ app.post('/api/submitEntry', function (req, res) {
 		highscores[req.cookies.uuid] = new Score(name, word)
 		AllUsers.push(req.cookies.uuid)
 	}
-	// if (AllUsers.includes(req.cookies.uuid) === false) {
-	// 	AllUsers.push(req.cookies.uuid)
-	// }
 	res.json(highscores[req.cookies.uuid].points)
 })
 

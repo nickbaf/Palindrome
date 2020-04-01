@@ -20,17 +20,9 @@ var _bodyParser = require('body-parser');
 
 var _bodyParser2 = _interopRequireDefault(_bodyParser);
 
-var _db = require('./db');
-
-var _db2 = _interopRequireDefault(_db);
-
 var _middleware = require('./middleware');
 
 var _middleware2 = _interopRequireDefault(_middleware);
-
-var _api = require('./api');
-
-var _api2 = _interopRequireDefault(_api);
 
 var _scores = require('./models/interface/scores');
 
@@ -58,18 +50,18 @@ var AllUsers = new Array();
 var Top5Users = new Array();
 var IsMutexEnabled = false;
 
-// logger
-app.use((0, _morgan2.default)('dev'));
-
-// // 3rd party middleware
-// app.use(cors({
-// 	exposedHeaders: config.corsHeaders
-// }));
+// logger for debug purposes
+// app.use(morgan('dev'));
 
 app.use(_bodyParser2.default.json({
 	limit: _config2.default.bodyLimit
 }));
 
+/**
+ * This function calculates the high score every 1500milis.
+ * As this function is called from the SetInterval which is Async, we want a mutex 
+ * so as to "lock" the object and all the players to submit a new word during the calculation of the highscores.
+ */
 function calculateHighScores() {
 	IsMutexEnabled = true;
 	Top5Users = new Array();
@@ -77,7 +69,6 @@ function calculateHighScores() {
 		return _scores2.default[b].points - _scores2.default[a].points;
 	});
 	if (AllUsers.length >= 5) {
-		//na ypologistei sdto telos tou gyros
 		AllUsers.slice(0, 5).forEach(function (element) {
 			Top5Users.push(_scores2.default[element]);
 		});
@@ -89,7 +80,6 @@ function calculateHighScores() {
 	IsMutexEnabled = false;
 }
 
-var db = "test";
 app.use((0, _middleware2.default)({ app: app })); //the first level of middleware
 app.get('/', function (req, res) {
 	res.render('index.html');
@@ -111,13 +101,16 @@ app.post('/api/submitEntry', function (req, res) {
 	if (IsMutexEnabled) {
 		res.json("The turn is over");
 	}
-	_scores2.default[req.cookies.uuid] = new _score.Score(name, word);
-	if (AllUsers.includes(req.cookies.uuid) === false) {
+	if (_scores2.default[req.cookies.uuid] !== undefined) {
+		_scores2.default[req.cookies.uuid].updateScore(word);
+	} else {
+		_scores2.default[req.cookies.uuid] = new _score.Score(name, word);
 		AllUsers.push(req.cookies.uuid);
 	}
-	//SortedMap.set(highscores[req.body.name].points,req.body.name);
+	// if (AllUsers.includes(req.cookies.uuid) === false) {
+	// 	AllUsers.push(req.cookies.uuid)
+	// }
 	res.json(_scores2.default[req.cookies.uuid].points);
-	//res.json(req.body.name)
 });
 
 app.server.listen(process.env.PORT || _config2.default.port, function () {
